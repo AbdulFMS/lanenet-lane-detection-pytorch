@@ -37,14 +37,17 @@ def test():
 
     model_path = args.model
     model = LaneNet(arch=args.model_type)
-    state_dict = torch.load(model_path)
+    state_dict = torch.load(model_path,map_location=torch.device('cpu'))
     model.load_state_dict(state_dict)
     model.eval()
     model.to(DEVICE)
 
     dummy_input = load_test_data(img_path, data_transform).to(DEVICE)
     dummy_input = torch.unsqueeze(dummy_input, dim=0)
+
+    t_start = time.time()
     outputs = model(dummy_input)
+    print((time.time() - t_start))
 
     input = Image.open(img_path)
     input = input.resize((resize_width, resize_height))
